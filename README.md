@@ -230,6 +230,42 @@ In Progress - Day 1 Foundation Completed
 
 - Detailed 2-week implementation plan: `docs/two-week-plan.md`
 
+## Day 3 Firebase (Dev) Setup
+
+Firebase bootstrapping is now wired at startup using `firebase_core` and environment-based options.
+
+### Environment strategy
+
+- `APP_ENV` is read from `--dart-define` (defaults to `dev`)
+- Current profile support: `dev` (with `prod` placeholder for future expansion)
+
+### Required dev defines
+
+Set these when running the app in development:
+
+- `APP_ENV=dev`
+- `FIREBASE_API_KEY_DEV`
+- `FIREBASE_PROJECT_ID_DEV`
+- `FIREBASE_MESSAGING_SENDER_ID_DEV`
+- `FIREBASE_STORAGE_BUCKET_DEV`
+- `FIREBASE_ANDROID_APP_ID_DEV` (Android)
+- `FIREBASE_IOS_APP_ID_DEV` (iOS)
+- `FIREBASE_WEB_APP_ID_DEV` (Web/Desktop fallback)
+
+### Example run command
+
+```bash
+flutter run \
+	--dart-define=APP_ENV=dev \
+	--dart-define=FIREBASE_API_KEY_DEV=yourApiKey \
+	--dart-define=FIREBASE_PROJECT_ID_DEV=yourProjectId \
+	--dart-define=FIREBASE_MESSAGING_SENDER_ID_DEV=yourSenderId \
+	--dart-define=FIREBASE_STORAGE_BUCKET_DEV=yourStorageBucket \
+	--dart-define=FIREBASE_ANDROID_APP_ID_DEV=yourAndroidAppId \
+	--dart-define=FIREBASE_IOS_APP_ID_DEV=yourIosAppId \
+	--dart-define=FIREBASE_WEB_APP_ID_DEV=yourWebAppId
+```
+
 ## License
 
 Private - Internal development
