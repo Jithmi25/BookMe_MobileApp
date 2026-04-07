@@ -17,19 +17,19 @@
 - Customer and provider placeholder home screens added
 - Baseline theme configured
 
-### Day 2
+### Day 2 (Completed)
 
 - Define domain entities: User, Provider, Booking, Review
 - Add model classes and JSON serialization strategy
 - Add reusable constants for booking statuses and user roles
 
-### Day 3
+### Day 3 (Completed)
 
 - Setup Firebase project linkage (dev)
 - Integrate Firebase core package and bootstrapping
 - Add environment configuration strategy (`dev` profile)
 
-### Day 4
+### Day 4 (Completed)
 
 - Implement authentication UI (phone input + role selection)
 - Add auth state handling skeleton
