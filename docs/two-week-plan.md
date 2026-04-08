@@ -35,7 +35,7 @@
 - Add auth state handling skeleton
 - Route guard behavior based on auth + role
 
-### Day 5
+### Day 5 (Completed)
 
 - Build customer home: categories + simple search input
 - Add static local mock provider list

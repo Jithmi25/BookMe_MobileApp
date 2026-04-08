@@ -234,6 +234,8 @@ In Progress - Day 1 Foundation Completed
 
 Firebase bootstrapping is now wired at startup using `firebase_core` and environment-based options.
 
+If required Firebase defines are missing in `dev`, the app now starts without Firebase and logs a warning. In `prod`, Firebase configuration remains required.
+
 ### Environment strategy
 
 - `APP_ENV` is read from `--dart-define` (defaults to `dev`)
@@ -252,18 +254,44 @@ Set these when running the app in development:
 - `FIREBASE_IOS_APP_ID_DEV` (iOS)
 - `FIREBASE_WEB_APP_ID_DEV` (Web/Desktop fallback)
 
-### Example run command
+### Example run commands (PowerShell)
 
-```bash
-flutter run \
-	--dart-define=APP_ENV=dev \
-	--dart-define=FIREBASE_API_KEY_DEV=yourApiKey \
-	--dart-define=FIREBASE_PROJECT_ID_DEV=yourProjectId \
-	--dart-define=FIREBASE_MESSAGING_SENDER_ID_DEV=yourSenderId \
-	--dart-define=FIREBASE_STORAGE_BUCKET_DEV=yourStorageBucket \
-	--dart-define=FIREBASE_ANDROID_APP_ID_DEV=yourAndroidAppId \
-	--dart-define=FIREBASE_IOS_APP_ID_DEV=yourIosAppId \
+Use backtick (`` ` ``) for line continuation in PowerShell, not `\`.
+
+```powershell
+flutter run -d chrome `
+	--dart-define=APP_ENV=dev `
+	--dart-define=FIREBASE_API_KEY_DEV=yourApiKey `
+	--dart-define=FIREBASE_PROJECT_ID_DEV=yourProjectId `
+	--dart-define=FIREBASE_MESSAGING_SENDER_ID_DEV=yourSenderId `
+	--dart-define=FIREBASE_STORAGE_BUCKET_DEV=yourStorageBucket `
 	--dart-define=FIREBASE_WEB_APP_ID_DEV=yourWebAppId
+```
+
+```powershell
+flutter run -d android `
+	--dart-define=APP_ENV=dev `
+	--dart-define=FIREBASE_API_KEY_DEV=yourApiKey `
+	--dart-define=FIREBASE_PROJECT_ID_DEV=yourProjectId `
+	--dart-define=FIREBASE_MESSAGING_SENDER_ID_DEV=yourSenderId `
+	--dart-define=FIREBASE_STORAGE_BUCKET_DEV=yourStorageBucket `
+	--dart-define=FIREBASE_ANDROID_APP_ID_DEV=yourAndroidAppId
+```
+
+```powershell
+flutter run -d ios `
+	--dart-define=APP_ENV=dev `
+	--dart-define=FIREBASE_API_KEY_DEV=yourApiKey `
+	--dart-define=FIREBASE_PROJECT_ID_DEV=yourProjectId `
+	--dart-define=FIREBASE_MESSAGING_SENDER_ID_DEV=yourSenderId `
+	--dart-define=FIREBASE_STORAGE_BUCKET_DEV=yourStorageBucket `
+	--dart-define=FIREBASE_IOS_APP_ID_DEV=yourIosAppId
+```
+
+One-line alternative (works in any shell):
+
+```powershell
+flutter run -d chrome --dart-define=APP_ENV=dev --dart-define=FIREBASE_API_KEY_DEV=yourApiKey --dart-define=FIREBASE_PROJECT_ID_DEV=yourProjectId --dart-define=FIREBASE_MESSAGING_SENDER_ID_DEV=yourSenderId --dart-define=FIREBASE_STORAGE_BUCKET_DEV=yourStorageBucket --dart-define=FIREBASE_WEB_APP_ID_DEV=yourWebAppId
 ```
 
 ## License

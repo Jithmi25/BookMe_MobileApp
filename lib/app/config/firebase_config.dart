@@ -14,7 +14,7 @@ class FirebaseConfig {
     }
   }
 
-  static void validateCurrentEnvironment() {
+  static List<String> get missingRequiredKeys {
     final options = currentPlatform;
 
     final missingKeys = <String>[];
@@ -32,13 +32,25 @@ class FirebaseConfig {
       missingKeys.add(_activeAppIdKey);
     }
 
-    if (missingKeys.isNotEmpty) {
-      throw StateError(
-        'Missing Firebase config for ${AppEnvironmentConfig.current.name}: '
-        '${missingKeys.join(', ')}. '
-        'Pass values using --dart-define.',
-      );
+    return missingKeys;
+  }
+
+  static bool get hasRequiredConfiguration {
+    return missingRequiredKeys.isEmpty;
+  }
+
+  static void validateCurrentEnvironment() {
+    final missingKeys = missingRequiredKeys;
+
+    if (missingKeys.isEmpty) {
+      return;
     }
+
+    throw StateError(
+      'Missing Firebase config for ${AppEnvironmentConfig.current.name}: '
+      '${missingKeys.join(', ')}. '
+      'Pass values using --dart-define.',
+    );
   }
 
   static FirebaseOptions get _devOptions {
