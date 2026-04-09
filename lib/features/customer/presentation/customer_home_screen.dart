@@ -1,6 +1,7 @@
 import 'package:book_me_mobile_app/app/router/app_router.dart';
 import 'package:book_me_mobile_app/features/auth/application/auth_controller.dart';
 import 'package:book_me_mobile_app/features/customer/data/local_mock_provider_repository.dart';
+import 'package:book_me_mobile_app/features/customer/presentation/provider_profile_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/widgets/provider_card.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
 import 'package:flutter/material.dart';
@@ -102,7 +103,19 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                       itemCount: _providers.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 10),
                       itemBuilder: (context, index) {
-                        return ProviderCard(provider: _providers[index]);
+                        final provider = _providers[index];
+
+                        return ProviderCard(
+                          provider: provider,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    ProviderProfileScreen(provider: provider),
+                              ),
+                            );
+                          },
+                        );
                       },
                     ),
             ),

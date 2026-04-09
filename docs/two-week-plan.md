@@ -41,7 +41,7 @@
 - Add static local mock provider list
 - Provider card UI component baseline
 
-### Day 6
+### Day 6 (Completed)
 
 - Provider profile screen (photo, rating, experience, price)
 - CTA to initiate booking

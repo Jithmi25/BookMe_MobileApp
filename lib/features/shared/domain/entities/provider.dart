@@ -6,6 +6,7 @@ class Provider {
   const Provider({
     required this.id,
     required this.userId,
+    this.profilePhoto,
     required this.skills,
     required this.serviceAreas,
     required this.experienceYears,
@@ -20,6 +21,7 @@ class Provider {
 
   final String id;
   final String userId;
+  final String? profilePhoto;
   final List<String> skills;
   final List<String> serviceAreas;
   final int experienceYears;
@@ -34,6 +36,7 @@ class Provider {
   Provider copyWith({
     String? id,
     String? userId,
+    String? profilePhoto,
     List<String>? skills,
     List<String>? serviceAreas,
     int? experienceYears,
@@ -48,6 +51,7 @@ class Provider {
     return Provider(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      profilePhoto: profilePhoto ?? this.profilePhoto,
       skills: skills ?? this.skills,
       serviceAreas: serviceAreas ?? this.serviceAreas,
       experienceYears: experienceYears ?? this.experienceYears,
@@ -73,6 +77,7 @@ class Provider {
     return Provider(
       id: (json['id'] as String?) ?? (json['providerId'] as String?) ?? '',
       userId: (json['userId'] as String?) ?? '',
+      profilePhoto: json['profilePhoto'] as String?,
       skills: JsonUtils.parseStringList(json['skills']),
       serviceAreas: JsonUtils.parseStringList(json['serviceAreas']),
       experienceYears: (json['experienceYears'] as num?)?.toInt() ?? 0,
@@ -90,6 +95,7 @@ class Provider {
     return {
       'id': id,
       'userId': userId,
+      'profilePhoto': profilePhoto,
       'skills': skills,
       'serviceAreas': serviceAreas,
       'experienceYears': experienceYears,
