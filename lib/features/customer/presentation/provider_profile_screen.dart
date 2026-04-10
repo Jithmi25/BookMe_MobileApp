@@ -4,9 +4,14 @@ import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart
 import 'package:flutter/material.dart';
 
 class ProviderProfileScreen extends StatelessWidget {
-  const ProviderProfileScreen({required this.provider, super.key});
+  const ProviderProfileScreen({
+    required this.provider,
+    required this.customerId,
+    super.key,
+  });
 
   final Provider provider;
+  final String customerId;
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +153,10 @@ class ProviderProfileScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => BookingRequestScreen(provider: provider),
+                    builder: (_) => BookingRequestScreen(
+                      provider: provider,
+                      customerId: customerId,
+                    ),
                   ),
                 );
               },
@@ -201,7 +209,7 @@ class _MetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       decoration: BoxDecoration(
-        color: colorScheme.surface.withOpacity(0.6),
+        color: colorScheme.surface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(

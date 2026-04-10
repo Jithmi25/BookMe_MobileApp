@@ -47,7 +47,7 @@
 - CTA to initiate booking
 - Reusable detail row widgets
 
-### Day 7
+### Day 7 (Completed)
 
 - Booking screen UI (date, time, note, payment method)
 - Create booking request flow using local mock repository

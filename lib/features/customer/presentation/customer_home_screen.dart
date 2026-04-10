@@ -108,10 +108,14 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                         return ProviderCard(
                           provider: provider,
                           onTap: () {
+                            final customerId =
+                                state.phoneNumber ?? 'customer_guest';
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
-                                builder: (_) =>
-                                    ProviderProfileScreen(provider: provider),
+                                builder: (_) => ProviderProfileScreen(
+                                  provider: provider,
+                                  customerId: customerId,
+                                ),
                               ),
                             );
                           },
