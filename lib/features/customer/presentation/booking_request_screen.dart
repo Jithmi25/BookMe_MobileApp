@@ -1,6 +1,7 @@
-import 'package:book_me_mobile_app/features/customer/data/local_mock_booking_repository.dart';
+import 'package:book_me_mobile_app/features/customer/data/firestore_booking_repository.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/booking.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
+import 'package:book_me_mobile_app/features/shared/domain/repositories/booking_repository.dart';
 import 'package:flutter/material.dart';
 
 class BookingRequestScreen extends StatefulWidget {
@@ -26,8 +27,7 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final _noteController = TextEditingController();
-  final LocalMockBookingRepository _bookingRepository =
-      const LocalMockBookingRepository();
+  final BookingRepository _bookingRepository = FirestoreBookingRepository();
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
@@ -250,6 +250,9 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
 
     final isValidForm = _formKey.currentState?.validate() ?? false;
     final hasDateTime = _selectedDate != null && _selectedTime != null;
+    final bookingCategory = widget.provider.skills.isNotEmpty
+        ? widget.provider.skills.first
+        : 'General';
 
     if (!isValidForm || !hasDateTime) {
       setState(() {
@@ -258,13 +261,15 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
       return;
     }
 
-    final createdBooking = _bookingRepository.createBookingRequest(
+    final createdBooking = await _bookingRepository.createBookingRequest(
       customerId: widget.customerId,
-      provider: widget.provider,
+      providerId: widget.provider.id,
+      category: bookingCategory,
       date: _selectedDate!,
       time: _formatTimeOfDay(_selectedTime!),
       note: _noteController.text,
       paymentMethod: _selectedPaymentMethod,
+      amount: (widget.provider.priceMin + widget.provider.priceMax) / 2,
     );
 
     if (!mounted) {

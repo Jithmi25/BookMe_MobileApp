@@ -61,7 +61,7 @@
 - Implement providers read flow from Firestore
 - Replace local provider mocks with repository data
 
-### Day 9
+### Day 9 (Completed)
 
 - Implement booking create and status update in Firestore
 - Provider booking request list screen
