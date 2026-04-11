@@ -55,7 +55,7 @@
 
 ## Week 2 - Data + Quality
 
-### Day 8
+### Day 8 (Completed)
 
 - Firestore collections setup and repository interfaces
 - Implement providers read flow from Firestore

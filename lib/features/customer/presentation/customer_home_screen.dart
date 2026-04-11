@@ -1,6 +1,7 @@
 import 'package:book_me_mobile_app/app/router/app_router.dart';
 import 'package:book_me_mobile_app/features/auth/application/auth_controller.dart';
-import 'package:book_me_mobile_app/features/customer/data/local_mock_provider_repository.dart';
+import 'package:book_me_mobile_app/features/customer/data/firestore_provider_repository.dart';
+import 'package:book_me_mobile_app/features/customer/domain/repositories/provider_repository.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/provider_profile_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/widgets/provider_card.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
@@ -16,17 +17,37 @@ class CustomerHomeScreen extends StatefulWidget {
 }
 
 class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
-  final LocalMockProviderRepository _repository =
-      const LocalMockProviderRepository();
+  final ProviderRepository _repository = FirestoreProviderRepository();
 
-  String _selectedCategory = LocalMockProviderRepository.categories.first;
+  static const List<String> _categories = [
+    'All',
+    'Plumber',
+    'Carpenter',
+    'Electrician',
+    'Cleaner',
+  ];
+
+  String _selectedCategory = _categories.first;
   String _searchQuery = '';
+  late Future<List<Provider>> _providersFuture;
 
-  List<Provider> get _providers {
+  @override
+  void initState() {
+    super.initState();
+    _providersFuture = _loadProviders();
+  }
+
+  Future<List<Provider>> _loadProviders() {
     return _repository.getProviders(
       selectedCategory: _selectedCategory,
       searchQuery: _searchQuery,
     );
+  }
+
+  void _refreshProviders() {
+    setState(() {
+      _providersFuture = _loadProviders();
+    });
   }
 
   @override
@@ -67,6 +88,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 setState(() {
                   _searchQuery = value;
                 });
+                _refreshProviders();
               },
             ),
             const SizedBox(height: 12),
@@ -74,11 +96,10 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
               height: 36,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemCount: LocalMockProviderRepository.categories.length,
+                itemCount: _categories.length,
                 separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (context, index) {
-                  final category =
-                      LocalMockProviderRepository.categories[index];
+                  final category = _categories[index];
                   final isSelected = category == _selectedCategory;
 
                   return ChoiceChip(
@@ -88,6 +109,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                       setState(() {
                         _selectedCategory = category;
                       });
+                      _refreshProviders();
                     },
                   );
                 },
@@ -95,33 +117,61 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
             ),
             const SizedBox(height: 12),
             Expanded(
-              child: _providers.isEmpty
-                  ? const Center(
-                      child: Text('No providers found for current filters.'),
-                    )
-                  : ListView.separated(
-                      itemCount: _providers.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final provider = _providers[index];
+              child: FutureBuilder<List<Provider>>(
+                future: _providersFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                        return ProviderCard(
-                          provider: provider,
-                          onTap: () {
-                            final customerId =
-                                state.phoneNumber ?? 'customer_guest';
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => ProviderProfileScreen(
-                                  provider: provider,
-                                  customerId: customerId,
-                                ),
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Failed to load providers.'),
+                          const SizedBox(height: 8),
+                          OutlinedButton(
+                            onPressed: _refreshProviders,
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final providers = snapshot.data ?? const <Provider>[];
+                  if (providers.isEmpty) {
+                    return const Center(
+                      child: Text('No providers found for current filters.'),
+                    );
+                  }
+
+                  return ListView.separated(
+                    itemCount: providers.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final provider = providers[index];
+
+                      return ProviderCard(
+                        provider: provider,
+                        onTap: () {
+                          final customerId =
+                              state.phoneNumber ?? 'customer_guest';
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => ProviderProfileScreen(
+                                provider: provider,
+                                customerId: customerId,
                               ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
