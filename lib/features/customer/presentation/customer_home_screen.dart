@@ -1,7 +1,9 @@
 import 'package:book_me_mobile_app/app/router/app_router.dart';
 import 'package:book_me_mobile_app/features/auth/application/auth_controller.dart';
+import 'package:book_me_mobile_app/features/customer/data/firestore_booking_repository.dart';
 import 'package:book_me_mobile_app/features/customer/data/firestore_provider_repository.dart';
 import 'package:book_me_mobile_app/features/customer/domain/repositories/provider_repository.dart';
+import 'package:book_me_mobile_app/features/customer/presentation/customer_booking_history_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/provider_profile_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/widgets/provider_card.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
@@ -53,6 +55,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final state = widget.authController.state;
+    final customerId = state.phoneNumber ?? 'customer_guest';
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +80,27 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Signed in as ${state.phoneNumber ?? '-'}'),
+            Row(
+              children: [
+                Expanded(
+                  child: Text('Signed in as ${state.phoneNumber ?? '-'}'),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => CustomerBookingHistoryScreen(
+                          customerId: customerId,
+                          repository: FirestoreBookingRepository(),
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.history_rounded),
+                  label: const Text('My bookings'),
+                ),
+              ],
+            ),
             const SizedBox(height: 12),
             TextField(
               decoration: const InputDecoration(
@@ -156,8 +179,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                       return ProviderCard(
                         provider: provider,
                         onTap: () {
-                          final customerId =
-                              state.phoneNumber ?? 'customer_guest';
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (_) => ProviderProfileScreen(

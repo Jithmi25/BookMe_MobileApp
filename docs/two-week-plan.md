@@ -67,7 +67,7 @@
 - Provider booking request list screen
 - Accept/reject state updates
 
-### Day 10
+### Day 10 (Completed)
 
 - Completed booking state transition
 - Customer booking history screen
