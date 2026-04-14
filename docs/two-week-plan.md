@@ -73,7 +73,7 @@
 - Customer booking history screen
 - Provider booking history screen
 
-### Day 11
+### Day 11 (Completed)
 
 - Ratings and review submission after completed booking
 - Provider rating aggregate update logic

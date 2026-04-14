@@ -1,4 +1,5 @@
 import 'package:book_me_mobile_app/app/constants/constants.dart';
+import 'package:book_me_mobile_app/features/customer/presentation/review_submission_screen.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/booking.dart';
 import 'package:book_me_mobile_app/features/shared/domain/repositories/booking_repository.dart';
 import 'package:flutter/material.dart';
@@ -112,6 +113,25 @@ class _CustomerBookingHistoryScreenState
                         ),
                         const SizedBox(height: 8),
                         Text(booking.note),
+                        if (booking.status == BookingStatuses.completed) ...[
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => ReviewSubmissionScreen(
+                                      booking: booking,
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.rate_review_rounded),
+                              label: const Text('Leave a review'),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

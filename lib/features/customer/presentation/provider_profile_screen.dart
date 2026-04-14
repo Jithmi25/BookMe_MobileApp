@@ -1,9 +1,12 @@
+import 'package:book_me_mobile_app/features/customer/data/firestore_review_repository.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/booking_request_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/widgets/detail_row.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
+import 'package:book_me_mobile_app/features/shared/domain/entities/review.dart';
+import 'package:book_me_mobile_app/features/shared/domain/repositories/review_repository.dart';
 import 'package:flutter/material.dart';
 
-class ProviderProfileScreen extends StatelessWidget {
+class ProviderProfileScreen extends StatefulWidget {
   const ProviderProfileScreen({
     required this.provider,
     required this.customerId,
@@ -12,6 +15,22 @@ class ProviderProfileScreen extends StatelessWidget {
 
   final Provider provider;
   final String customerId;
+
+  @override
+  State<ProviderProfileScreen> createState() => _ProviderProfileScreenState();
+}
+
+class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
+  late Future<List<Review>> _reviewsFuture;
+  final ReviewRepository _reviewRepository = FirestoreReviewRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    _reviewsFuture = _reviewRepository.getReviewsForProvider(
+      widget.provider.id,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,10 +190,108 @@ class ProviderProfileScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 32),
+            Text(
+              'Customer reviews (${widget.provider.ratingCount})',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 12),
+            FutureBuilder<List<Review>>(
+              future: _reviewsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final reviews = snapshot.data ?? const <Review>[];
+                if (reviews.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        'No reviews yet. Be the first to review!',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: reviews.take(5).length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final review = reviews[index];
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  review.customerId,
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                Row(
+                                  children: List.generate(
+                                    5,
+                                    (i) => Icon(
+                                      Icons.star_rounded,
+                                      size: 16,
+                                      color: i < review.stars
+                                          ? Colors.amber
+                                          : colorScheme.outlineVariant,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (review.comment.isNotEmpty) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                review.comment,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                            const SizedBox(height: 6),
+                            Text(
+                              _formatDate(review.createdAt),
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    return '$day/$month/${date.year}';
   }
 
   String _formatDisplayName(String value) {
