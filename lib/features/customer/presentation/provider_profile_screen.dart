@@ -35,14 +35,22 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final provider = widget.provider;
+    final customerId = widget.customerId;
     final headlineSkill = provider.skills.isNotEmpty
         ? provider.skills.first
-        : '-';
+        : 'Service provider';
     final displayName = _formatDisplayName(provider.id);
-    final ratingText = provider.ratingAvg.toStringAsFixed(1);
-    final priceText =
-        'LKR ${provider.priceMin.toStringAsFixed(0)} - ${provider.priceMax.toStringAsFixed(0)}';
-    final avatarChild = provider.profilePhoto == null
+    final ratingText = provider.ratingCount > 0
+        ? provider.ratingAvg.toStringAsFixed(1)
+        : 'New';
+    final priceText = _buildPriceRange(
+      minPrice: provider.priceMin,
+      maxPrice: provider.priceMax,
+    );
+    final profilePhotoUrl = _normalizePhotoUrl(provider.profilePhoto);
+    final trustBadges = _buildTrustBadges(provider);
+    final avatarChild = profilePhotoUrl == null
         ? Text(
             displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -77,8 +85,8 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                   CircleAvatar(
                     radius: 44,
                     backgroundColor: colorScheme.surface,
-                    backgroundImage: provider.profilePhoto != null
-                        ? NetworkImage(provider.profilePhoto!)
+                    backgroundImage: profilePhotoUrl != null
+                        ? NetworkImage(profilePhotoUrl)
                         : null,
                     child: avatarChild,
                   ),
@@ -113,7 +121,9 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                         child: _MetricCard(
                           icon: Icons.work_history_rounded,
                           label: 'Experience',
-                          value: '${provider.experienceYears} yrs',
+                          value: provider.experienceYears > 0
+                              ? '${provider.experienceYears} yrs'
+                              : 'New',
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -140,19 +150,25 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
             DetailRow(
               icon: Icons.badge_outlined,
               label: 'Provider ID',
-              value: provider.id,
+              value: provider.id.trim().isNotEmpty
+                  ? provider.id
+                  : 'Unavailable',
             ),
             const SizedBox(height: 12),
             DetailRow(
               icon: Icons.handyman_outlined,
               label: 'Skills',
-              value: provider.skills.join(', '),
+              value: provider.skills.isNotEmpty
+                  ? provider.skills.join(', ')
+                  : 'Not specified',
             ),
             const SizedBox(height: 12),
             DetailRow(
               icon: Icons.map_outlined,
               label: 'Service areas',
-              value: provider.serviceAreas.join(', '),
+              value: provider.serviceAreas.isNotEmpty
+                  ? provider.serviceAreas.join(', ')
+                  : 'Not specified',
             ),
             const SizedBox(height: 12),
             DetailRow(
@@ -163,10 +179,28 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
             const SizedBox(height: 12),
             DetailRow(
               icon: Icons.verified_outlined,
-              label: 'Trust signals',
-              value:
-                  'NIC ${provider.nicVerified ? 'verified' : 'pending'} • Photo ${provider.photoVerified ? 'verified' : 'pending'}',
+              label: 'Verification status',
+              value: trustBadges.isNotEmpty
+                  ? 'Verified checks available'
+                  : 'Verification pending',
             ),
+            const SizedBox(height: 12),
+            if (trustBadges.isNotEmpty)
+              Wrap(spacing: 8, runSpacing: 8, children: trustBadges)
+            else
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'No verification badges are visible yet. This provider can still receive bookings while verification is in progress.',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () {
@@ -306,6 +340,47 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
         .map((segment) => segment[0].toUpperCase() + segment.substring(1))
         .join(' ');
   }
+
+  String _buildPriceRange({
+    required double minPrice,
+    required double maxPrice,
+  }) {
+    if (minPrice <= 0 || maxPrice <= 0 || maxPrice < minPrice) {
+      return 'Price on request';
+    }
+
+    return 'LKR ${minPrice.toStringAsFixed(0)} - ${maxPrice.toStringAsFixed(0)}';
+  }
+
+  String? _normalizePhotoUrl(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+
+    final uri = Uri.tryParse(trimmed);
+    final hasHttpScheme =
+        uri != null &&
+        (uri.scheme.toLowerCase() == 'http' ||
+            uri.scheme.toLowerCase() == 'https');
+    return hasHttpScheme ? trimmed : null;
+  }
+
+  List<Widget> _buildTrustBadges(Provider provider) {
+    final badges = <Widget>[];
+
+    if (provider.nicVerified) {
+      badges.add(const _TrustBadge(icon: Icons.badge, label: 'NIC verified'));
+    }
+
+    if (provider.photoVerified) {
+      badges.add(
+        const _TrustBadge(icon: Icons.verified_user, label: 'Photo verified'),
+      );
+    }
+
+    return badges;
+  }
 }
 
 class _MetricCard extends StatelessWidget {
@@ -347,6 +422,40 @@ class _MetricCard extends StatelessWidget {
               color: colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrustBadge extends StatelessWidget {
+  const _TrustBadge({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: colorScheme.onTertiaryContainer),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: colorScheme.onTertiaryContainer,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

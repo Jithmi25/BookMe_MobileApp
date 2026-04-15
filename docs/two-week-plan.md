@@ -79,7 +79,7 @@
 - Provider rating aggregate update logic
 - Display review list on provider profile
 
-### Day 12
+### Day 12 (Completed)
 
 - Basic trust & safety fields in profile (NIC/photo verification status)
 - Gate visibility badges on provider profile

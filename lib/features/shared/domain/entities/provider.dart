@@ -86,9 +86,26 @@ class Provider {
       priceMax: (json['priceMax'] as num?)?.toDouble() ?? 0,
       ratingAvg: (json['ratingAvg'] as num?)?.toDouble() ?? 0,
       ratingCount: (json['ratingCount'] as num?)?.toInt() ?? 0,
-      nicVerified: (json['nicVerified'] as bool?) ?? false,
-      photoVerified: (json['photoVerified'] as bool?) ?? false,
+      nicVerified: _parseBool(json['nicVerified']),
+      photoVerified: _parseBool(json['photoVerified']),
     );
+  }
+
+  static bool _parseBool(dynamic value) {
+    if (value is bool) {
+      return value;
+    }
+
+    if (value is num) {
+      return value != 0;
+    }
+
+    if (value is String) {
+      final normalized = value.trim().toLowerCase();
+      return normalized == 'true' || normalized == '1' || normalized == 'yes';
+    }
+
+    return false;
   }
 
   Map<String, dynamic> toJson() {
