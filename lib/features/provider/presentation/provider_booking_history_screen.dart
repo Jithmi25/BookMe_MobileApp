@@ -1,6 +1,7 @@
 import 'package:book_me_mobile_app/app/constants/constants.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/booking.dart';
 import 'package:book_me_mobile_app/features/shared/domain/repositories/booking_repository.dart';
+import 'package:book_me_mobile_app/features/shared/presentation/widgets/async_state_widgets.dart';
 import 'package:flutter/material.dart';
 
 class ProviderBookingHistoryScreen extends StatefulWidget {
@@ -50,6 +51,14 @@ class _ProviderBookingHistoryScreenState
         status: BookingStatuses.completed,
       );
       _refreshBookings();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to mark booking as completed. Try again.'),
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -67,22 +76,13 @@ class _ProviderBookingHistoryScreenState
         future: _bookingsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingState(message: 'Loading booking history...');
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Failed to load booking history.'),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: _refreshBookings,
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
+            return AppErrorState(
+              message: 'Failed to load booking history.',
+              onRetry: _refreshBookings,
             );
           }
 
@@ -92,8 +92,12 @@ class _ProviderBookingHistoryScreenState
               .toList(growable: false);
 
           if (history.isEmpty) {
-            return const Center(
-              child: Text('No accepted, completed, or cancelled bookings yet.'),
+            return AppEmptyState(
+              title: 'No accepted, completed, or cancelled bookings yet.',
+              subtitle: 'Accepted bookings will appear here once updated.',
+              icon: Icons.history_toggle_off_rounded,
+              actionLabel: 'Reload',
+              onAction: _refreshBookings,
             );
           }
 

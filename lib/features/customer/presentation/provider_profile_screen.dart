@@ -4,6 +4,7 @@ import 'package:book_me_mobile_app/features/customer/presentation/widgets/detail
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/review.dart';
 import 'package:book_me_mobile_app/features/shared/domain/repositories/review_repository.dart';
+import 'package:book_me_mobile_app/features/shared/presentation/widgets/async_state_widgets.dart';
 import 'package:flutter/material.dart';
 
 class ProviderProfileScreen extends StatefulWidget {
@@ -30,6 +31,14 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
     _reviewsFuture = _reviewRepository.getReviewsForProvider(
       widget.provider.id,
     );
+  }
+
+  void _reloadReviews() {
+    setState(() {
+      _reviewsFuture = _reviewRepository.getReviewsForProvider(
+        widget.provider.id,
+      );
+    });
   }
 
   @override
@@ -237,24 +246,23 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SizedBox(
-                    height: 100,
-                    child: Center(child: CircularProgressIndicator()),
+                    height: 120,
+                    child: AppLoadingState(message: 'Loading reviews...'),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  return AppErrorState(
+                    message: 'Failed to load reviews for this provider.',
+                    onRetry: _reloadReviews,
                   );
                 }
 
                 final reviews = snapshot.data ?? const <Review>[];
                 if (reviews.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Text(
-                        'No reviews yet. Be the first to review!',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                  return const AppEmptyState(
+                    title: 'No reviews yet. Be the first to review!',
+                    icon: Icons.reviews_outlined,
                   );
                 }
 

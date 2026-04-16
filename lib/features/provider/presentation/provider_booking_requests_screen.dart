@@ -1,6 +1,7 @@
 import 'package:book_me_mobile_app/app/constants/constants.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/booking.dart';
 import 'package:book_me_mobile_app/features/shared/domain/repositories/booking_repository.dart';
+import 'package:book_me_mobile_app/features/shared/presentation/widgets/async_state_widgets.dart';
 import 'package:flutter/material.dart';
 
 class ProviderBookingRequestsScreen extends StatefulWidget {
@@ -50,6 +51,14 @@ class _ProviderBookingRequestsScreenState
         status: status,
       );
       _refreshBookings();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to update booking status. Try again.'),
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -67,22 +76,15 @@ class _ProviderBookingRequestsScreenState
         future: _bookingsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingState(
+              message: 'Loading booking requests...',
+            );
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Failed to load booking requests.'),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: _refreshBookings,
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
+            return AppErrorState(
+              message: 'Failed to load booking requests.',
+              onRetry: _refreshBookings,
             );
           }
 
@@ -92,8 +94,12 @@ class _ProviderBookingRequestsScreenState
               .toList(growable: false);
 
           if (requests.isEmpty) {
-            return const Center(
-              child: Text('No pending booking requests right now.'),
+            return AppEmptyState(
+              title: 'No pending booking requests right now.',
+              subtitle: 'Pull to refresh later or try reloading now.',
+              icon: Icons.inbox_outlined,
+              actionLabel: 'Reload',
+              onAction: _refreshBookings,
             );
           }
 

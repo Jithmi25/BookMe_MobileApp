@@ -7,6 +7,7 @@ import 'package:book_me_mobile_app/features/customer/presentation/customer_booki
 import 'package:book_me_mobile_app/features/customer/presentation/provider_profile_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/widgets/provider_card.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
+import 'package:book_me_mobile_app/features/shared/presentation/widgets/async_state_widgets.dart';
 import 'package:flutter/material.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
@@ -144,29 +145,26 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 future: _providersFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const AppLoadingState(
+                      message: 'Loading providers...',
+                    );
                   }
 
                   if (snapshot.hasError) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Failed to load providers.'),
-                          const SizedBox(height: 8),
-                          OutlinedButton(
-                            onPressed: _refreshProviders,
-                            child: const Text('Retry'),
-                          ),
-                        ],
-                      ),
+                    return AppErrorState(
+                      message: 'Failed to load providers.',
+                      onRetry: _refreshProviders,
                     );
                   }
 
                   final providers = snapshot.data ?? const <Provider>[];
                   if (providers.isEmpty) {
-                    return const Center(
-                      child: Text('No providers found for current filters.'),
+                    return AppEmptyState(
+                      title: 'No providers found for current filters.',
+                      subtitle: 'Try another category or search term.',
+                      icon: Icons.search_off_rounded,
+                      actionLabel: 'Reload',
+                      onAction: _refreshProviders,
                     );
                   }
 

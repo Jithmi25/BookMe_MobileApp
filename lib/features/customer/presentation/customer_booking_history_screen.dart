@@ -2,6 +2,7 @@ import 'package:book_me_mobile_app/app/constants/constants.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/review_submission_screen.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/booking.dart';
 import 'package:book_me_mobile_app/features/shared/domain/repositories/booking_repository.dart';
+import 'package:book_me_mobile_app/features/shared/presentation/widgets/async_state_widgets.dart';
 import 'package:flutter/material.dart';
 
 class CustomerBookingHistoryScreen extends StatefulWidget {
@@ -47,29 +48,24 @@ class _CustomerBookingHistoryScreenState
         future: _bookingsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingState(message: 'Loading your bookings...');
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Failed to load booking history.'),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: _refreshBookings,
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
+            return AppErrorState(
+              message: 'Failed to load booking history.',
+              onRetry: _refreshBookings,
             );
           }
 
           final bookings = snapshot.data ?? const <Booking>[];
           if (bookings.isEmpty) {
-            return const Center(
-              child: Text('No bookings yet. Create your first request.'),
+            return AppEmptyState(
+              title: 'No bookings yet.',
+              subtitle: 'Create your first booking request to get started.',
+              icon: Icons.calendar_month_outlined,
+              actionLabel: 'Reload',
+              onAction: _refreshBookings,
             );
           }
 

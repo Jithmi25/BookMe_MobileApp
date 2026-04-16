@@ -261,30 +261,46 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
       return;
     }
 
-    final createdBooking = await _bookingRepository.createBookingRequest(
-      customerId: widget.customerId,
-      providerId: widget.provider.id,
-      category: bookingCategory,
-      date: _selectedDate!,
-      time: _formatTimeOfDay(_selectedTime!),
-      note: _noteController.text,
-      paymentMethod: _selectedPaymentMethod,
-      amount: (widget.provider.priceMin + widget.provider.priceMax) / 2,
-    );
+    try {
+      final createdBooking = await _bookingRepository.createBookingRequest(
+        customerId: widget.customerId,
+        providerId: widget.provider.id,
+        category: bookingCategory,
+        date: _selectedDate!,
+        time: _formatTimeOfDay(_selectedTime!),
+        note: _noteController.text,
+        paymentMethod: _selectedPaymentMethod,
+        amount: (widget.provider.priceMin + widget.provider.priceMax) / 2,
+      );
 
-    if (!mounted) {
-      return;
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = false;
+      });
+
+      await _showSuccessDialog(createdBooking);
+      if (!mounted) {
+        return;
+      }
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to submit booking. Please try again.'),
+        ),
+      );
     }
-
-    setState(() {
-      _isSubmitting = false;
-    });
-
-    await _showSuccessDialog(createdBooking);
-    if (!mounted) {
-      return;
-    }
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   Future<void> _showSuccessDialog(Booking booking) {

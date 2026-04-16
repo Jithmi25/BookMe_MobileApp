@@ -181,6 +181,16 @@ class _ReviewSubmissionScreenState extends State<ReviewSubmissionScreen> {
       }
 
       Navigator.of(context).pop();
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to submit review. Please try again.'),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
