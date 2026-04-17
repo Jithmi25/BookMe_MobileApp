@@ -91,11 +91,18 @@
 - Empty states and retry flows
 - UX polish pass for MVP consistency
 
-### Day 14
+### Day 14 (Completed)
 
 - Final QA pass on critical journeys
 - Performance and lint cleanup
 - MVP release checklist + deployment readiness notes
+
+### Day 14 Output in Code/Docs
+
+- `docs/day-14-qa-report.md`
+- `docs/mvp-release-readiness-checklist.md`
+- `lib/features/customer/presentation/widgets/detail_row.dart`
+- `test/widget_test.dart`
 
 ## Day 1 Output in Code
 

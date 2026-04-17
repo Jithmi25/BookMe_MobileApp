@@ -15,8 +15,10 @@ void main() {
   ) async {
     await tester.pumpWidget(const BookMeApp());
 
-    expect(find.text('Choose your role'), findsOneWidget);
-    expect(find.text('I am a Customer'), findsOneWidget);
-    expect(find.text('I am a Service Provider'), findsOneWidget);
+    expect(find.text('Sign in to Book Me'), findsOneWidget);
+    expect(find.text('Phone login (UI skeleton)'), findsOneWidget);
+    expect(find.text('Customer'), findsOneWidget);
+    expect(find.text('Role'), findsOneWidget);
+    expect(find.text('Continue'), findsOneWidget);
   });
 }

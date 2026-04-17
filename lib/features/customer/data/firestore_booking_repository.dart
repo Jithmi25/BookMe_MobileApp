@@ -9,11 +9,11 @@ class FirestoreBookingRepository implements BookingRepository {
   FirestoreBookingRepository({
     FirebaseFirestore? firestore,
     LocalMockBookingRepository? fallbackRepository,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : _firestore = firestore,
        _fallbackRepository =
            fallbackRepository ?? const LocalMockBookingRepository();
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final LocalMockBookingRepository _fallbackRepository;
 
   @override
@@ -41,8 +41,10 @@ class FirestoreBookingRepository implements BookingRepository {
       return booking;
     }
 
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
     final booking = Booking(
-      id: _firestore.collection(FirestoreCollections.bookings).doc().id,
+      id: firestore.collection(FirestoreCollections.bookings).doc().id,
       customerId: customerId.trim().isEmpty
           ? 'customer_guest'
           : customerId.trim(),
@@ -57,7 +59,7 @@ class FirestoreBookingRepository implements BookingRepository {
       createdAt: DateTime.now(),
     );
 
-    await _firestore
+    await firestore
         .collection(FirestoreCollections.bookings)
         .doc(booking.id)
         .set(booking.toJson());
@@ -71,7 +73,9 @@ class FirestoreBookingRepository implements BookingRepository {
       return _fallbackRepository.getBookingsForProvider(providerId);
     }
 
-    final snapshot = await _firestore
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
+    final snapshot = await firestore
         .collection(FirestoreCollections.bookings)
         .where('providerId', isEqualTo: providerId)
         .orderBy('createdAt', descending: true)
@@ -88,7 +92,9 @@ class FirestoreBookingRepository implements BookingRepository {
       return _fallbackRepository.getBookingsForCustomer(customerId);
     }
 
-    final snapshot = await _firestore
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
+    final snapshot = await firestore
         .collection(FirestoreCollections.bookings)
         .where('customerId', isEqualTo: customerId)
         .orderBy('createdAt', descending: true)
@@ -111,12 +117,14 @@ class FirestoreBookingRepository implements BookingRepository {
       );
     }
 
-    await _firestore
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
+    await firestore
         .collection(FirestoreCollections.bookings)
         .doc(bookingId)
         .update({'status': status});
 
-    final snapshot = await _firestore
+    final snapshot = await firestore
         .collection(FirestoreCollections.bookings)
         .doc(bookingId)
         .get();

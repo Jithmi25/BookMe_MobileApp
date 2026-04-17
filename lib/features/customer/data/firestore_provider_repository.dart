@@ -9,10 +9,11 @@ class FirestoreProviderRepository implements ProviderRepository {
   FirestoreProviderRepository({
     FirebaseFirestore? firestore,
     LocalMockProviderRepository? fallbackRepository,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
-       _fallbackRepository = fallbackRepository ?? const LocalMockProviderRepository();
+  }) : _firestore = firestore,
+       _fallbackRepository =
+           fallbackRepository ?? const LocalMockProviderRepository();
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final LocalMockProviderRepository _fallbackRepository;
 
   @override
@@ -27,7 +28,9 @@ class FirestoreProviderRepository implements ProviderRepository {
       );
     }
 
-    Query<Map<String, dynamic>> query = _firestore.collection(
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
+    Query<Map<String, dynamic>> query = firestore.collection(
       FirestoreCollections.providers,
     );
 

@@ -1,5 +1,4 @@
 import 'package:book_me_mobile_app/features/customer/data/local_mock_review_repository.dart';
-import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/review.dart';
 import 'package:book_me_mobile_app/features/shared/domain/repositories/review_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,11 +8,11 @@ class FirestoreReviewRepository implements ReviewRepository {
   FirestoreReviewRepository({
     FirebaseFirestore? firestore,
     LocalMockReviewRepository? fallbackRepository,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : _firestore = firestore,
        _fallbackRepository =
            fallbackRepository ?? const LocalMockReviewRepository();
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final LocalMockReviewRepository _fallbackRepository;
 
   @override
@@ -34,8 +33,10 @@ class FirestoreReviewRepository implements ReviewRepository {
       );
     }
 
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
     final review = Review(
-      id: _firestore.collection('reviews').doc().id,
+      id: firestore.collection('reviews').doc().id,
       bookingId: bookingId,
       customerId: customerId,
       providerId: providerId,
@@ -44,7 +45,7 @@ class FirestoreReviewRepository implements ReviewRepository {
       createdAt: DateTime.now(),
     );
 
-    await _firestore.collection('reviews').doc(review.id).set(review.toJson());
+    await firestore.collection('reviews').doc(review.id).set(review.toJson());
 
     // Update provider's aggregate rating
     await updateProviderRating(providerId: providerId, reviews: [review]);
@@ -58,7 +59,9 @@ class FirestoreReviewRepository implements ReviewRepository {
       return _fallbackRepository.getReviewsForProvider(providerId);
     }
 
-    final snapshot = await _firestore
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
+    final snapshot = await firestore
         .collection('reviews')
         .where('providerId', isEqualTo: providerId)
         .orderBy('createdAt', descending: true)
@@ -81,6 +84,8 @@ class FirestoreReviewRepository implements ReviewRepository {
       );
     }
 
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+
     // Fetch all reviews for this provider
     final allReviews = await getReviewsForProvider(providerId);
 
@@ -91,12 +96,12 @@ class FirestoreReviewRepository implements ReviewRepository {
     // Calculate aggregate rating
     final totalStars = allReviews.fold<int>(
       0,
-      (sum, review) => sum + review.stars,
+      (total, review) => total + review.stars,
     );
     final averageRating = totalStars / allReviews.length;
 
     // Update provider document with new rating and count
-    await _firestore.collection('providers').doc(providerId).update({
+    await firestore.collection('providers').doc(providerId).update({
       'ratingAvg': averageRating,
       'ratingCount': allReviews.length,
     });

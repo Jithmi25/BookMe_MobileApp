@@ -224,11 +224,13 @@ reviews/
 
 ## Project Status
 
-In Progress - Day 1 Foundation Completed
+In Progress - 2-week MVP plan completed through Day 14 (QA + release readiness).
 
 ## Active Delivery Plan
 
 - Detailed 2-week implementation plan: `docs/two-week-plan.md`
+- Day 14 QA report: `docs/day-14-qa-report.md`
+- MVP release checklist: `docs/mvp-release-readiness-checklist.md`
 
 ## Day 3 Firebase (Dev) Setup
 
