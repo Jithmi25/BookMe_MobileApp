@@ -23,6 +23,7 @@ Date: 2026-04-17
 - [x] `flutter analyze` passes.
 - [x] `flutter test` passes.
 - [x] Deprecated API usage cleaned from touched flow.
+- [x] CI workflow runs analyze and tests on push and pull requests.
 
 ## Firebase Readiness
 
@@ -34,7 +35,7 @@ Date: 2026-04-17
 
 - [ ] Android release signing config verified.
 - [ ] iOS signing/provisioning verified.
-- [ ] Version/build number bumped for release.
+- [x] Version/build number bumped for release.
 - [ ] Smoke test completed on at least one Android and one iOS device.
 
 ## Launch Ops
