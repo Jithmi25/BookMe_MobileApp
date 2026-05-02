@@ -21,6 +21,13 @@ class ProviderHomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
+              Navigator.pushNamed(context, AppRouter.providerProfile);
+            },
+            icon: const Icon(Icons.person),
+            tooltip: 'My Profile',
+          ),
+          IconButton(
+            onPressed: () {
               authController.signOut();
               Navigator.pushNamedAndRemoveUntil(
                 context,

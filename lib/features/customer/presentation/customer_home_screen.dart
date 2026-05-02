@@ -64,6 +64,13 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
+              Navigator.pushNamed(context, AppRouter.customerProfile);
+            },
+            icon: const Icon(Icons.person),
+            tooltip: 'My Profile',
+          ),
+          IconButton(
+            onPressed: () {
               widget.authController.signOut();
               Navigator.pushNamedAndRemoveUntil(
                 context,

@@ -1,7 +1,9 @@
 import 'package:book_me_mobile_app/features/auth/application/auth_controller.dart';
 import 'package:book_me_mobile_app/features/auth/presentation/role_selection_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/customer_home_screen.dart';
+import 'package:book_me_mobile_app/features/customer/presentation/customer_profile_screen.dart';
 import 'package:book_me_mobile_app/features/provider/presentation/provider_home_screen.dart';
+import 'package:book_me_mobile_app/features/provider/presentation/provider_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {
@@ -9,7 +11,9 @@ class AppRouter {
 
   static const String roleSelection = '/';
   static const String customerHome = '/customer-home';
+  static const String customerProfile = '/customer-profile';
   static const String providerHome = '/provider-home';
+  static const String providerProfile = '/provider-profile';
 
   static Route<dynamic> generateRoute({
     required RouteSettings settings,
@@ -21,6 +25,16 @@ class AppRouter {
     );
 
     switch (targetRoute) {
+      case customerProfile:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: customerProfile),
+          builder: (_) => CustomerProfileScreen(authController: authController),
+        );
+      case providerProfile:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: providerProfile),
+          builder: (_) => ProviderProfileScreen(authController: authController),
+        );
       case customerHome:
         return MaterialPageRoute(
           settings: const RouteSettings(name: customerHome),
@@ -48,7 +62,10 @@ class AppRouter {
     final authState = authController.state;
 
     if (!authState.isAuthenticated) {
-      if (currentRoute == customerHome || currentRoute == providerHome) {
+      if (currentRoute == customerHome ||
+          currentRoute == providerHome ||
+          currentRoute == customerProfile ||
+          currentRoute == providerProfile) {
         return roleSelection;
       }
       return roleSelection;
@@ -64,6 +81,14 @@ class AppRouter {
 
     if (currentRoute == providerHome && authState.isCustomer) {
       return customerHome;
+    }
+
+    if (currentRoute == customerProfile && authState.isProvider) {
+      return providerProfile;
+    }
+
+    if (currentRoute == providerProfile && authState.isCustomer) {
+      return customerProfile;
     }
 
     return currentRoute;
