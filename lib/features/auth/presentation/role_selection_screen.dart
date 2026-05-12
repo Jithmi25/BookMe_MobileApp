@@ -53,17 +53,11 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Phone login (UI skeleton)',
+                'Phone login',
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 10),
-              Text(
-                'Day 4: collect phone and role before routing into customer/provider areas.',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
@@ -108,6 +102,22 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
               ElevatedButton(
                 onPressed: _continue,
                 child: const Text('Continue'),
+              ),
+              const SizedBox(height: 12),
+              // Google sign-in (UI-only stub) placed below Continue
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  side: const BorderSide(color: Colors.grey),
+                ),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Google sign-in (stub)')),
+                  );
+                },
+                icon: const Icon(Icons.login, color: Colors.redAccent),
+                label: const Text('Sign in with Google'),
               ),
             ],
           ),

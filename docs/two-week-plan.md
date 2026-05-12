@@ -1,12 +1,12 @@
-# Book Me - 2 Week MVP Plan
+# Book Me - 2 Week UI Prototype Plan
 
 ## Timeline
 
 - Duration: 14 days (2 weeks)
 - Start date: 2026-04-04
-- Goal: Functional MVP foundation with core customer/provider booking journey and Firebase-ready structure
+- Goal: UI-only prototype with core customer/provider screens and polished navigation
 
-## Week 1 - Foundation + Core Flows
+## Week 1 - UI Foundation
 
 ### Day 1 (Completed)
 
@@ -17,23 +17,11 @@
 - Customer and provider placeholder home screens added
 - Baseline theme configured
 
-### Day 2 (Completed)
-
-- Define domain entities: User, Provider, Booking, Review
-- Add model classes and JSON serialization strategy
-- Add reusable constants for booking statuses and user roles
-
-### Day 3 (Completed)
-
-- Setup Firebase project linkage (dev)
-- Integrate Firebase core package and bootstrapping
-- Add environment configuration strategy (`dev` profile)
-
 ### Day 4 (Completed)
 
-- Implement authentication UI (phone input + role selection)
-- Add auth state handling skeleton
-- Route guard behavior based on auth + role
+- Implement authentication UI shell
+- Add role-based screen layout
+- Route guard placeholders for UI flow only
 
 ### Day 5 (Completed)
 
@@ -50,73 +38,56 @@
 ### Day 7 (Completed)
 
 - Booking screen UI (date, time, note, payment method)
-- Create booking request flow using local mock repository
+- Create booking request flow using UI placeholders
 - End-to-end navigation sanity pass
 
-## Week 2 - Data + Quality
+## Week 2 - UI Polish
 
 ### Day 8 (Completed)
 
-- Firestore collections setup and repository interfaces
-- Implement providers read flow from Firestore
-- Replace local provider mocks with repository data
+- Refine spacing, typography, and color usage across screens
+- Polish buttons, cards, and form fields
+- Tighten responsive layout behavior
 
 ### Day 9 (Completed)
 
-- Implement booking create and status update in Firestore
-- Provider booking request list screen
-- Accept/reject state updates
+- Improve empty states and helper text
+- Add consistent loading and disabled states
+- Refine app bar and section headers
 
 ### Day 10 (Completed)
 
-- Completed booking state transition
-- Customer booking history screen
-- Provider booking history screen
+- Polish booking form layout
+- Improve screen hierarchy and visual grouping
+- Update icons and visual affordances
 
 ### Day 11 (Completed)
 
-- Ratings and review submission after completed booking
-- Provider rating aggregate update logic
-- Display review list on provider profile
+- Refine profile screen layout
+- Improve avatar, text, and action alignment
+- Polish reusable detail rows
 
 ### Day 12 (Completed)
 
-- Basic trust & safety fields in profile (NIC/photo verification status)
-- Gate visibility badges on provider profile
-- Validation and fallback states
+- Improve spacing and padding on profile sections
+- Add consistent card styling
+- Smooth out text overflow handling
 
 ### Day 13 (Completed)
 
-- Error handling and loading states across all key screens
-- Empty states and retry flows
-- UX polish pass for MVP consistency
+- Final UI consistency pass across all screens
+- Check alignment, contrast, and tap targets
+- Clean up small visual inconsistencies
 
 ### Day 14 (Completed)
 
-- Final QA pass on critical journeys
+- Final UI QA pass on critical screens
 - Performance and lint cleanup
-- MVP release checklist + deployment readiness notes
+- UI handoff checklist + polish notes
 
-### Day 14 Output in Code/Docs
+## UI Prototype Success Criteria
 
-- `docs/day-14-qa-report.md`
-- `docs/mvp-release-readiness-checklist.md`
-- `lib/features/customer/presentation/widgets/detail_row.dart`
-- `test/widget_test.dart`
-
-## Day 1 Output in Code
-
-- `lib/main.dart`
-- `lib/app/app.dart`
-- `lib/app/router/app_router.dart`
-- `lib/app/theme/app_theme.dart`
-- `lib/features/auth/presentation/role_selection_screen.dart`
-- `lib/features/customer/presentation/customer_home_screen.dart`
-- `lib/features/provider/presentation/provider_home_screen.dart`
-
-## Success Criteria by End of 2 Weeks
-
-- Customer can discover provider, book service, and leave review
-- Provider can manage profile and booking requests
-- Data persists in Firebase Auth + Firestore
-- Core flows validated for MVP launch readiness
+- Customer can move through the app screens with clear, polished UI
+- Provider screens are visually consistent and easy to scan
+- Forms, cards, and navigation feel coherent across the app
+- The prototype is ready for UI review and design iteration

@@ -24,10 +24,10 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
   void initState() {
     super.initState();
     final state = widget.authController.state;
-    _nameController = TextEditingController(text: state.userName ?? '');
+    _nameController = TextEditingController();
     _phoneController = TextEditingController(text: state.phoneNumber ?? '');
     _specialtyController = TextEditingController(text: 'Your specialty');
-    _profileImagePath = state.profilePhoto;
+    _profileImagePath = null;
   }
 
   @override
@@ -43,12 +43,18 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
       final pickedFile = await _imagePicker.pickImage(
         source: ImageSource.gallery,
       );
+      if (!mounted) {
+        return;
+      }
       if (pickedFile != null) {
         setState(() {
           _profileImagePath = pickedFile.path;
         });
       }
     } catch (e) {
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
@@ -77,8 +83,6 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = widget.authController.state;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Profile'),
@@ -193,11 +197,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              controller: TextEditingController(
-                text: state.createdAt != null
-                    ? '${state.createdAt!.year}-${state.createdAt!.month.toString().padLeft(2, '0')}-${state.createdAt!.day.toString().padLeft(2, '0')}'
-                    : 'N/A',
-              ),
+              controller: TextEditingController(text: 'Not available'),
             ),
             const SizedBox(height: 32),
 
@@ -210,9 +210,9 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                       onPressed: () {
                         setState(() {
                           _isEditing = false;
-                          _nameController.text = state.userName ?? '';
+                          _nameController.text = '';
                           _specialtyController.text = 'Your specialty';
-                          _profileImagePath = state.profilePhoto;
+                          _profileImagePath = null;
                         });
                       },
                       child: const Text('Cancel'),

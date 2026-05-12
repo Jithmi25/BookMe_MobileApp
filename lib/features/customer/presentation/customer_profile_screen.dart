@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:book_me_mobile_app/features/auth/application/auth_controller.dart';
 import 'package:book_me_mobile_app/features/shared/presentation/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +23,9 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   void initState() {
     super.initState();
     final state = widget.authController.state;
-    _nameController = TextEditingController(text: state.userName ?? '');
+    _nameController = TextEditingController();
     _phoneController = TextEditingController(text: state.phoneNumber ?? '');
-    _profileImagePath = state.profilePhoto;
+    _profileImagePath = null;
   }
 
   @override
@@ -42,12 +40,18 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
       final pickedFile = await _imagePicker.pickImage(
         source: ImageSource.gallery,
       );
+      if (!mounted) {
+        return;
+      }
       if (pickedFile != null) {
         setState(() {
           _profileImagePath = pickedFile.path;
         });
       }
     } catch (e) {
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
@@ -177,11 +181,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              controller: TextEditingController(
-                text: state.createdAt != null
-                    ? '${state.createdAt!.year}-${state.createdAt!.month.toString().padLeft(2, '0')}-${state.createdAt!.day.toString().padLeft(2, '0')}'
-                    : 'N/A',
-              ),
+              controller: TextEditingController(text: 'Not available'),
             ),
             const SizedBox(height: 32),
 
@@ -194,8 +194,8 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                       onPressed: () {
                         setState(() {
                           _isEditing = false;
-                          _nameController.text = state.userName ?? '';
-                          _profileImagePath = state.profilePhoto;
+                          _nameController.text = '';
+                          _profileImagePath = null;
                         });
                       },
                       child: const Text('Cancel'),
