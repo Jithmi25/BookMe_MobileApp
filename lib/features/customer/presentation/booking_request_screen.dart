@@ -25,6 +25,14 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
     'mobile_wallet',
   ];
 
+  static const List<TimeOfDay> _timeSlots = <TimeOfDay>[
+    TimeOfDay(hour: 8, minute: 0),
+    TimeOfDay(hour: 10, minute: 0),
+    TimeOfDay(hour: 12, minute: 0),
+    TimeOfDay(hour: 14, minute: 0),
+    TimeOfDay(hour: 16, minute: 0),
+  ];
+
   final _formKey = GlobalKey<FormState>();
   final _noteController = TextEditingController();
   final BookingRepository _bookingRepository = FirestoreBookingRepository();
@@ -66,6 +74,31 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Transparent price estimator',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Estimated range: LKR ${provider.priceMin.toStringAsFixed(0)} - ${provider.priceMax.toStringAsFixed(0)}',
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Secure card and wallet payments are supported through escrow-style checkout.',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -117,6 +150,26 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _timeSlots
+                        .map(
+                          (slot) => ChoiceChip(
+                            label: Text(_formatTimeOfDay(slot)),
+                            selected: _selectedTime == slot,
+                            onSelected: _isSubmitting
+                                ? null
+                                : (_) {
+                                    setState(() {
+                                      _selectedTime = slot;
+                                    });
+                                  },
+                          ),
+                        )
+                        .toList(growable: false),
+                  ),
+                  const SizedBox(height: 12),
                   OutlinedButton.icon(
                     onPressed: _isSubmitting ? null : _pickTime,
                     icon: const Icon(Icons.schedule_rounded),
@@ -139,7 +192,7 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
                   DropdownButtonFormField<String>(
                     initialValue: _selectedPaymentMethod,
                     decoration: const InputDecoration(
-                      labelText: 'Payment method',
+                      labelText: 'Secure payment method',
                       prefixIcon: Icon(Icons.payments_outlined),
                     ),
                     items: _paymentMethods
@@ -160,6 +213,11 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
                               _selectedPaymentMethod = value;
                             });
                           },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Payments remain secured until the booking is completed.',
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -346,10 +404,12 @@ class _BookingRequestScreenState extends State<BookingRequestScreen> {
   }
 
   String _humanizePaymentMethod(String value) {
-    return value
-        .split('_')
-        .map((part) => part[0].toUpperCase() + part.substring(1))
-        .join(' ');
+    return switch (value) {
+      'cash' => 'Cash on completion',
+      'card' => 'Secure card (escrow)',
+      'mobile_wallet' => 'Digital wallet (escrow)',
+      _ => value,
+    };
   }
 }
 

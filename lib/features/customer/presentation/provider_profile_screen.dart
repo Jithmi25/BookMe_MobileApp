@@ -1,5 +1,7 @@
 import 'package:book_me_mobile_app/features/customer/data/firestore_review_repository.dart';
+import 'package:book_me_mobile_app/features/customer/application/favorite_workers_service.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/booking_request_screen.dart';
+import 'package:book_me_mobile_app/features/customer/presentation/secure_chat_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/widgets/detail_row.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
 import 'package:book_me_mobile_app/features/shared/domain/entities/review.dart';
@@ -59,6 +61,8 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
     );
     final profilePhotoUrl = _normalizePhotoUrl(provider.profilePhoto);
     final trustBadges = _buildTrustBadges(provider);
+    final favoriteService = FavoriteWorkersService.instance;
+    final isFavorite = favoriteService.isFavorite(provider.id);
     final avatarChild = profilePhotoUrl == null
         ? Text(
             displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
@@ -149,6 +153,43 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
               ),
             ),
             const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        favoriteService.toggle(provider);
+                      });
+                    },
+                    icon: Icon(
+                      isFavorite
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                    ),
+                    label: Text(isFavorite ? 'Saved' : 'Favourite'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => SecureChatScreen(
+                            provider: provider,
+                            customerId: customerId,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.chat_bubble_outline_rounded),
+                    label: const Text('Chat'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
             Text(
               'Profile details',
               style: Theme.of(

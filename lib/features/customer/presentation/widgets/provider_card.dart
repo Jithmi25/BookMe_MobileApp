@@ -2,10 +2,16 @@ import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart
 import 'package:flutter/material.dart';
 
 class ProviderCard extends StatelessWidget {
-  const ProviderCard({required this.provider, this.onTap, super.key});
+  const ProviderCard({
+    required this.provider,
+    this.onTap,
+    this.actions,
+    super.key,
+  });
 
   final Provider provider;
   final VoidCallback? onTap;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +62,10 @@ class ProviderCard extends StatelessWidget {
                   ),
                 ],
               ),
+              if (actions != null && actions!.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Wrap(spacing: 8, runSpacing: 8, children: actions!),
+              ],
             ],
           ),
         ),
