@@ -61,6 +61,14 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
     );
     final profilePhotoUrl = _normalizePhotoUrl(provider.profilePhoto);
     final trustBadges = _buildTrustBadges(provider);
+    final skillBadges = provider.skills
+        .map(
+          (skill) => Chip(
+            avatar: const Icon(Icons.handyman_rounded, size: 16),
+            label: Text(skill),
+          ),
+        )
+        .toList(growable: false);
     final favoriteService = FavoriteWorkersService.instance;
     final isFavorite = favoriteService.isFavorite(provider.id);
     final avatarChild = profilePhotoUrl == null
@@ -209,9 +217,13 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
               icon: Icons.handyman_outlined,
               label: 'Skills',
               value: provider.skills.isNotEmpty
-                  ? provider.skills.join(', ')
+                  ? 'Skill badges below'
                   : 'Not specified',
             ),
+            if (skillBadges.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Wrap(spacing: 8, runSpacing: 8, children: skillBadges),
+            ],
             const SizedBox(height: 12),
             DetailRow(
               icon: Icons.map_outlined,

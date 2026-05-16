@@ -5,8 +5,74 @@ import 'package:book_me_mobile_app/features/shared/domain/repositories/booking_r
 class LocalMockBookingRepository implements BookingRepository {
   const LocalMockBookingRepository();
 
-  static final List<Booking> _bookings = <Booking>[];
-  static int _idCounter = 1;
+  static final List<Booking> _bookings = <Booking>[
+    Booking(
+      id: 'booking_0001',
+      customerId: '0701234567',
+      providerId: 'provider_nimal',
+      category: 'Plumber',
+      date: DateTime.now().add(const Duration(days: 1)),
+      time: '10:00',
+      note: 'Fix kitchen leak and replace washer',
+      status: BookingStatuses.pending,
+      paymentMethod: 'cash',
+      amount: 3500,
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
+    Booking(
+      id: 'booking_0002',
+      customerId: '0701234567',
+      providerId: 'provider_kasun',
+      category: 'Electrician',
+      date: DateTime.now(),
+      time: '14:00',
+      note: 'Replace damaged wiring in lounge',
+      status: BookingStatuses.accepted,
+      paymentMethod: 'card',
+      amount: 4500,
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+    Booking(
+      id: 'booking_0003',
+      customerId: '0701234567',
+      providerId: 'provider_sajini',
+      category: 'Cleaner',
+      date: DateTime.now().subtract(const Duration(days: 3)),
+      time: '09:00',
+      note: 'Deep clean bathroom and kitchen',
+      status: BookingStatuses.completed,
+      paymentMethod: 'mobile_wallet',
+      amount: 2200,
+      createdAt: DateTime.now().subtract(const Duration(days: 6)),
+    ),
+    Booking(
+      id: 'booking_0004',
+      customerId: '0709998887',
+      providerId: 'provider_dinesh',
+      category: 'Carpenter',
+      date: DateTime.now().add(const Duration(days: 2)),
+      time: '11:00',
+      note: 'Build small storage shelf',
+      status: BookingStatuses.cancelled,
+      paymentMethod: 'cash',
+      amount: 4800,
+      createdAt: DateTime.now().subtract(const Duration(days: 4)),
+    ),
+    Booking(
+      id: 'booking_0005',
+      customerId: '0701234567',
+      providerId: 'provider_tharindu',
+      category: 'Plumber',
+      date: DateTime.now().subtract(const Duration(days: 1)),
+      time: '16:00',
+      note: 'Emergency pipe replacement',
+      status: BookingStatuses.disputed,
+      paymentMethod: 'card',
+      amount: 5200,
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+  ];
+  static int _idCounter = 6;
 
   @override
   Future<Booking> createBookingRequest({

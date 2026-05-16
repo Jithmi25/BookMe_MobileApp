@@ -1,6 +1,9 @@
 import 'package:book_me_mobile_app/features/shared/domain/entities/provider.dart';
 import 'package:flutter/material.dart';
 
+final Map<String, List<_ChatMessage>> _chatStore =
+    <String, List<_ChatMessage>>{};
+
 class SecureChatScreen extends StatefulWidget {
   const SecureChatScreen({
     required this.provider,
@@ -17,12 +20,8 @@ class SecureChatScreen extends StatefulWidget {
 
 class _SecureChatScreenState extends State<SecureChatScreen> {
   final _messageController = TextEditingController();
-  final List<_ChatMessage> _messages = <_ChatMessage>[
-    const _ChatMessage(
-      sender: 'support',
-      text: 'Chat is encrypted for this job.',
-    ),
-  ];
+  late final String _conversationKey;
+  late List<_ChatMessage> _messages;
 
   String _targetLanguage = 'English';
 
@@ -30,6 +29,23 @@ class _SecureChatScreenState extends State<SecureChatScreen> {
   void dispose() {
     _messageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _conversationKey = '${widget.customerId}:${widget.provider.id}';
+    _messages = List<_ChatMessage>.from(
+      _chatStore[_conversationKey] ??
+          const <_ChatMessage>[
+            _ChatMessage(
+              sender: 'support',
+              text:
+                  'Chat is encrypted for this job and stored in the demo log.',
+            ),
+          ],
+    );
+    _chatStore[_conversationKey] = _messages;
   }
 
   @override
@@ -146,12 +162,14 @@ class _SecureChatScreenState extends State<SecureChatScreen> {
     setState(() {
       _messages.add(_ChatMessage(sender: 'customer', text: text));
       _messageController.clear();
+      _chatStore[_conversationKey] = List<_ChatMessage>.from(_messages);
     });
   }
 
   void _appendSystemMessage(String text) {
     setState(() {
       _messages.add(_ChatMessage(sender: 'support', text: text));
+      _chatStore[_conversationKey] = List<_ChatMessage>.from(_messages);
     });
   }
 

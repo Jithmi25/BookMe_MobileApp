@@ -34,7 +34,7 @@ class _BookMeAppState extends State<BookMeApp> {
           title: 'Book Me',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
-          initialRoute: AppRouter.roleSelection,
+          initialRoute: AppRouter.splash,
           onGenerateRoute: (settings) => AppRouter.generateRoute(
             settings: settings,
             authController: _authController,

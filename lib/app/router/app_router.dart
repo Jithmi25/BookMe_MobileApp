@@ -1,5 +1,8 @@
 import 'package:book_me_mobile_app/features/auth/application/auth_controller.dart';
 import 'package:book_me_mobile_app/features/auth/presentation/role_selection_screen.dart';
+import 'package:book_me_mobile_app/features/onboarding/presentation/splash_screen.dart';
+import 'package:book_me_mobile_app/features/onboarding/presentation/welcome_screen.dart';
+import 'package:book_me_mobile_app/features/onboarding/presentation/permissions_request_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/customer_home_screen.dart';
 import 'package:book_me_mobile_app/features/customer/presentation/customer_profile_screen.dart';
 import 'package:book_me_mobile_app/features/provider/presentation/provider_home_screen.dart';
@@ -9,6 +12,9 @@ import 'package:flutter/material.dart';
 class AppRouter {
   const AppRouter._();
 
+  static const String splash = '/splash';
+  static const String welcome = '/welcome';
+  static const String permissions = '/permissions';
   static const String roleSelection = '/';
   static const String customerHome = '/customer-home';
   static const String customerProfile = '/customer-profile';
@@ -29,6 +35,21 @@ class AppRouter {
         return MaterialPageRoute(
           settings: const RouteSettings(name: customerProfile),
           builder: (_) => CustomerProfileScreen(authController: authController),
+        );
+      case splash:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: splash),
+          builder: (_) => const SplashScreen(),
+        );
+      case welcome:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: welcome),
+          builder: (_) => const WelcomeScreen(),
+        );
+      case permissions:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: permissions),
+          builder: (_) => const PermissionsRequestScreen(),
         );
       case providerProfile:
         return MaterialPageRoute(

@@ -15,6 +15,15 @@ class ProviderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final badges = <Widget>[
+      if (provider.photoVerified)
+        const _Badge(label: 'Photo verified', icon: Icons.photo_camera_rounded),
+      if (provider.nicVerified)
+        const _Badge(label: 'ID verified', icon: Icons.verified_user_rounded),
+      ...provider.skills.map(
+        (skill) => _Badge(label: skill, icon: Icons.handyman_rounded),
+      ),
+    ];
     final headlineSkill = provider.skills.isNotEmpty
         ? provider.skills.first
         : '-';
@@ -51,6 +60,9 @@ class ProviderCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text('Experience: ${provider.experienceYears} years'),
               const SizedBox(height: 8),
+              if (badges.isNotEmpty)
+                Wrap(spacing: 8, runSpacing: 8, children: badges),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   const Icon(Icons.star, size: 16),
@@ -70,6 +82,22 @@ class ProviderCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _Badge extends StatelessWidget {
+  const _Badge({required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(icon, size: 16),
+      label: Text(label),
+      visualDensity: VisualDensity.compact,
     );
   }
 }
