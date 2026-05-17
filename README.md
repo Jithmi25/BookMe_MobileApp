@@ -1,6 +1,6 @@
 # Book Me - Mobile App
 
-Book Me is a service marketplace mobile app that connects customers with trusted local workers (plumbers, carpenters, electricians, cleaners, etc.) in Sri Lanka.
+Book Me is a Flutter-based service marketplace app that connects customers with trusted local workers in Sri Lanka. The current codebase includes onboarding, role selection, customer and provider flows, booking screens, reviews, secure chat, and Firebase bootstrapping.
 
 ## Problem Statement
 
@@ -224,13 +224,22 @@ reviews/
 
 ## Project Status
 
-In Progress - 2-week MVP plan completed through Day 14 (QA + release readiness).
+In progress. The app currently includes the core marketplace flows and Firebase startup wiring, with local mock repositories available for development and Firestore-backed repositories ready for integration.
 
 ## Active Delivery Plan
 
 - Detailed 2-week implementation plan: `docs/two-week-plan.md`
 - Day 14 QA report: `docs/day-14-qa-report.md`
 - MVP release checklist: `docs/mvp-release-readiness-checklist.md`
+
+## Current Implementation
+
+- Onboarding screens: splash, welcome, permissions request
+- Authentication: role selection and auth state wiring
+- Customer flows: home, provider profile, booking request, booking history, notifications, profile, reviews, secure chat, activities, and wanted screens
+- Provider flows: home, booking requests, booking history, and profile
+- Data layer: shared entities plus Firestore and local mock repositories for bookings, providers, and reviews
+- App foundation: routing, theme, constants, localization service, and Firebase bootstrap
 
 ## Day 3 Firebase (Dev) Setup
 
