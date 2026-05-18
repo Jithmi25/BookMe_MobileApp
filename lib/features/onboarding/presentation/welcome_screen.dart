@@ -41,8 +41,8 @@ class WelcomeScreen extends StatelessWidget {
               Text(
                 'Fix it fast. Book trusted pros in minutes.',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                  fontWeight: FontWeight.w800,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -52,26 +52,41 @@ class WelcomeScreen extends StatelessWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   children: const [
-                    _ServiceIllustration(label: 'Plumbing', icon: Icons.plumbing),
-                    _ServiceIllustration(label: 'Cleaning', icon: Icons.cleaning_services),
-                    _ServiceIllustration(label: 'Electrical', icon: Icons.electrical_services),
-                    _ServiceIllustration(label: 'Carpentry', icon: Icons.handyman),
+                    _ServiceIllustration(
+                      label: 'Plumbing',
+                      icon: Icons.plumbing,
+                    ),
+                    _ServiceIllustration(
+                      label: 'Cleaning',
+                      icon: Icons.cleaning_services,
+                    ),
+                    _ServiceIllustration(
+                      label: 'Electrical',
+                      icon: Icons.electrical_services,
+                    ),
+                    _ServiceIllustration(
+                      label: 'Carpentry',
+                      icon: Icons.handyman,
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 12),
               ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, AppRouter.roleSelection),
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRouter.permissions),
                 child: const Text('Sign Up'),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
-                onPressed: () => Navigator.pushNamed(context, AppRouter.roleSelection),
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRouter.permissions),
                 child: const Text('Log In'),
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () => Navigator.pushNamed(context, AppRouter.roleSelection),
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRouter.roleSelection),
                 child: const Text('Skip and browse as guest'),
               ),
             ],
